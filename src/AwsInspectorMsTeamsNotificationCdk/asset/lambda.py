@@ -49,7 +49,7 @@ def handler(event, context):
                 "value": f"{event['region']}"
             },
             {
-                "title": "AWS Inspector Finding ARN",
+                "title": "Finding ARN",
                 "value": f"{event['detail']['findingArn']}"
             },
             {
@@ -67,14 +67,10 @@ def handler(event, context):
             {
                 "title": "Last Observed At",
                 "value": f"{event['detail']['lastObservedAt']}"
-            },
-            {
-                "title": "Inspector Findings Raw Data",
-                "value": f"{event}"
             }
         ]
 
-        headerText = f"AWS INSPECTOR FINDING: {event['detail']['severity']}"
+        headerText = f"AWS INSPECTOR FINDING: {event['detail']['severity']} SEVERITY"
                
         msg = {  
                    "type":"message",  
@@ -84,7 +80,8 @@ def handler(event, context):
                          "content":{  
                             "$schema":"http://adaptivecards.io/schemas/adaptive-card.json",  
                             "type":"AdaptiveCard",  
-                            "version":"1.4",  
+                            "version":"1.4",
+                            "msteams": { "width": "full" },
                             "body": [
                         {
                             "type": "TextBlock",
@@ -96,12 +93,24 @@ def handler(event, context):
                         {
                             "type": "FactSet",
                             "facts": factset
-                        }
+                        },
+                        {
+                            "type": "TextBlock",
+                            "size": "Medium",
+                            "weight": "Bolder",
+                            "text":  "Inspector Findings Raw Data"
+                        },
+                        {
+                            "type": "TextBlock",
+                            "size": "Medium",
+                            "wrap": "true",
+                            "text": f"{event}"
+                        },
                     ],
                     "actions": [
                             {
                                 "type": "Action.OpenUrl",
-                                "title": "View Details (use Finding ARN as filter)",
+                                "title": "View Details in AWS Console (use Finding ARN as filter)",
                                 "url": f"https://{event['region']}.console.aws.amazon.com/inspector/v2/home?region={event['region']}#/findings"
                             }
                     ]
